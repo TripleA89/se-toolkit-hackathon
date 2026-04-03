@@ -72,39 +72,6 @@ A working web app that allows a user to paste meeting notes, generate structured
 After completion, Version 1 should be shown to the TA for feedback. Feedback points should be recorded and used in Version 2.
 
 ---
-
-## Version 2 Plan
-
-### Goal
-Extend and polish Version 1, address TA feedback, and deploy the product.
-
-### Planned Improvements
-Version 2 will build on the core functionality by adding useful features around the generated output.
-
-### Version 2 Scope
-
-#### Functional Improvements
-- View history of previously generated meeting summaries
-- Open and review past results
-- Improve the formatting and consistency of generated output
-- Improve error handling and validation
-
-#### Optional Feature Extensions
-Depending on time and TA feedback:
-- export result as Markdown or PDF
-- search or filter previous summaries
-- better UI/UX polish
-
-#### Deployment
-- Dockerize all services
-- Deploy on a VM
-- Make the latest version accessible to use
-
-### Version 2 Deliverable
-A deployed, documented, containerized product with improved functionality and better usability.
-
----
-
 ## Suggested Technical Stack
 
 ### Frontend
