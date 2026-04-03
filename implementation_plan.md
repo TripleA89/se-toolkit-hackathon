@@ -150,12 +150,6 @@ A functioning web app that transforms meeting notes into:
 
 and stores the result in the database.
 
-### Version 2
-An improved and deployed version that:
-- adds history and usability improvements,
-- addresses TA feedback,
-- is accessible online.
-
 ---
 
 ## Repository Notes
