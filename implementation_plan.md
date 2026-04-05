@@ -1,165 +1,93 @@
 # Implementation Plan — Meeting Notes Organizer
 
-## Product Overview
+## Product Idea
 
-**Product name:** Meeting Notes Organizer
+- End user: students, small teams, and professionals who run meetings
+- Problem: messy notes are hard to review, so decisions and tasks are missed
+- One-sentence idea: convert raw meeting notes into structured summary, decisions, and action items
+- Core feature: submit raw notes and instantly get structured output saved to history
 
-**One-sentence idea:**  
-A web app that turns raw meeting notes into structured summaries, decisions, and action items.
+## Required Architecture
 
-**End users:**  
-Students, small teams, and professionals.
+- Frontend: React + Vite (end-user web app)
+- Backend: FastAPI (API + LLM orchestration)
+- Database: PostgreSQL (users + meeting history)
+- LLM: free Qwen API via OpenAI-compatible endpoint
+- Deployment: Docker Compose on Ubuntu VM
 
-**Problem:**  
-Unstructured meeting notes lead to missed decisions and forgotten tasks.
-
----
-
-## Required Product Components
-
-- **Backend:** processes input, calls LLM (Qwen), stores results  
-- **Database:** stores notes and generated outputs  
-- **Frontend:** web interface for input and viewing results  
-
----
-
-## LLM Strategy (Free)
-
-Instead of paid APIs, the project will use:
-
-- **Qwen (open-source LLM)** via:
-  - local inference (Ollama or similar), OR
-  - free API endpoint (if available)
-
-### Why Qwen:
-- free
-- no API cost
-- good enough for summarization
-- easy to integrate
-
----
-
-## Version 1 Plan
+## Version 1 (MVP)
 
 ### Goal
-Build a working summarization pipeline.
 
-### Core Feature
-Input → Qwen → structured output
+Deliver one core workflow end-to-end.
 
-### Version 1 Scope
+### Scope
 
-#### Frontend
-- Text input (textarea)
-- Submit button
-- Output display:
-  - summary
-  - decisions
-  - action items
+- Input raw meeting notes in textarea
+- Backend calls Qwen model and returns structured JSON
+- Show summary, decisions, action items in UI
+- Persist analysis result in PostgreSQL
 
-#### Backend
-- POST endpoint `/summarize`
-- Send prompt to Qwen
-- Parse structured response (prefer JSON)
-- Return to frontend
+### Version 1 API
 
-#### Database
-Table: `summaries`
-- id
-- input_text
-- summary
-- decisions
-- action_items
-- created_at
+- `POST /api/v1/notes/analyze`
 
-### Version 1 Deliverable
-Working web app:
-- user inputs text
-- receives structured output
-- result stored in DB
+### Done Criteria
 
----
+- User can submit notes and receive structured output
+- Result is stored and can be retrieved from DB
+- Flow is stable enough for TA walkthrough
 
-## Version 2 Plan
+## Version 2
 
 ### Goal
-Improve usability + deploy
 
-### Improvements
-- history of summaries
-- view past results
-- better formatting
-- error handling
+Upgrade MVP into a deployable product with better usability.
 
-### Optional
-- export to Markdown / PDF
-- search
+### Scope
 
-### Deployment
-- Dockerize frontend + backend + DB
-- Run on VM
-- Ensure accessibility via browser
+- User auth: register/login/me
+- Personal history per user (isolated access)
+- History page with pagination
+- Markdown export for a saved analysis
+- RU/EN language switch in frontend
+- Better error handling and polished UI
+- Dockerized deployment on VM by IP
 
----
+### Version 2 API
 
-## Suggested Tech Stack
+- `POST /api/v1/auth/register`
+- `POST /api/v1/auth/login`
+- `GET /api/v1/auth/me`
+- `POST /api/v1/notes/analyze`
+- `GET /api/v1/notes`
+- `GET /api/v1/notes/{id}`
+- `GET /api/v1/notes/{id}/export/markdown`
 
-Frontend:
-- React + Vite
+### TA Feedback Addressed
 
-Backend:
-- FastAPI
+- Added persistent per-user history
+- Improved UX clarity and visual design
+- Added deployment-ready Docker Compose instructions
 
-Database:
-- PostgreSQL
+## LLM Integration Strategy
 
-LLM:
-- Qwen (via Ollama or API)
+- Primary model: `qwen/qwen3-next-80b-a3b-instruct:free`
+- Fallback models: configured in `.env`
+- Prompt asks for strict JSON: `summary`, `decisions`, `action_items`
+- Backend validates response format and returns clear errors for invalid model output
 
-Infra:
-- Docker + Docker Compose
+## Risks and Mitigations
 
----
+- Free API rate limits: retry with backoff and fallback models
+- Invalid LLM response format: strict parser + user-friendly error
+- Deployment drift: single Docker Compose entrypoint and documented env setup
 
-## High-Level Steps
+## Delivery Checklist
 
-1. Setup project structure  
-2. Setup PostgreSQL  
-3. Implement backend API  
-4. Integrate Qwen (local or API)  
-5. Build frontend UI  
-6. Connect frontend to backend  
-7. Store results in DB  
-8. Test Version 1  
-9. Add history (Version 2)  
-10. Dockerize  
-11. Deploy on VM  
-
----
-
-## Risks
-
-### 1. LLM output inconsistency
-Solution:
-- enforce JSON output in prompt
-- validate response
-
-### 2. Local model performance
-Solution:
-- limit input size
-- test with small texts
-
-### 3. Integration complexity
-Solution:
-- start with mock responses
-- then plug Qwen
-
----
-
-## Version Summary
-
-### Version 1
-Basic summarization pipeline using Qwen
-
-### Version 2
-Improved UX + deployed product
+- [x] Backend + DB + frontend implemented
+- [x] V1 core feature implemented
+- [x] V2 functionality implemented
+- [x] Dockerized and runnable on Ubuntu VM
+- [ ] Final demo video (<=2 min) for Moodle
+- [ ] Presentation slides (5 slides) for Moodle

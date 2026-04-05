@@ -1,46 +1,160 @@
 # Meeting Notes Organizer
 
-Web app that converts raw meeting notes into a structured summary, decisions, and action items.
+Turn raw meeting notes into a clean summary, decisions, and actionable tasks in seconds.
 
-## Stack
+Submission note: the GitHub repository for grading must be named `se-toolkit-hackathon`.
 
-- Frontend: React + Vite + TypeScript
-- Backend: FastAPI + SQLAlchemy
-- Database: PostgreSQL
-- LLM: Qwen via free API (OpenAI-compatible endpoint)
-- Deployment: Docker Compose
+## Demo
 
-## Quick Start (Local Docker)
+Analyze screen:
 
-1. Copy environment variables:
+![Analyze screen](docs/screenshots/demo-analyze.png)
+
+History screen:
+
+![History screen](docs/screenshots/demo-history.png)
+
+## Product Context
+
+### End users
+
+- Students working on team assignments
+- Small teams in startups
+- Professionals who need quick meeting recap
+
+### Problem that the product solves
+
+Meeting notes are often messy and unstructured, so teams miss decisions and forget follow-up tasks.
+
+### Solution
+
+The app accepts raw notes, sends them to a Qwen-based free LLM API, returns structured output (summary, decisions, action items), and saves results to a user-specific history.
+
+## Versioning (Lab 9)
+
+### Version 1 (MVP)
+
+- Input raw meeting notes
+- Generate summary, decisions, and action items
+- Store result in PostgreSQL
+
+### Version 2
+
+- User authentication (login/password)
+- Personal history per user
+- Markdown export
+- Better UX (language switch RU/EN, improved error handling, stronger UI)
+- Dockerized deployment for Ubuntu VM
+
+### TA feedback addressed in Version 2
+
+- Added persistent user-specific history
+- Improved interface clarity and polish
+- Added deployment-ready Docker Compose setup
+
+## Features
+
+### Implemented
+
+- FastAPI backend with REST API
+- PostgreSQL database with user and meeting note entities
+- React frontend with analyze and history pages
+- Auth: register/login/me with JWT
+- User-isolated history and note access
+- Free Qwen API integration with fallback models and retries
+- Markdown export of analyzed notes
+- RU/EN output language switch
+- Dockerfiles for backend/frontend and Compose orchestration
+
+### Not yet implemented
+
+- PDF export
+- Full-text search/filter in history
+- CI pipeline with automated tests
+- Custom domain + HTTPS reverse proxy setup
+
+## Usage
+
+1. Open the web app.
+2. Register a new account or sign in.
+3. Paste raw meeting notes on the Analyze page.
+4. Click `Analyze` and wait for structured output.
+5. Review previous analyses on the History page.
+6. Export any result to Markdown if needed.
+
+## Deployment
+
+### VM OS
+
+- Ubuntu 24.04 LTS
+
+### What should be installed on the VM
+
+- Git
+- Docker Engine
+- Docker Compose plugin
+
+### Step-by-step deployment instructions
+
+1. Clone the repository:
+
+```bash
+git clone <YOUR_REPO_URL>
+cd se-toolkit-hackathon
+```
+
+2. Create environment file:
 
 ```bash
 cp .env.example .env
 ```
 
-2. Set your API key in `.env`:
+3. Set required values in `.env`:
 
 ```bash
+POSTGRES_DB=meeting_notes
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+DATABASE_URL=postgresql+psycopg://postgres:postgres@db:5432/meeting_notes
+
 LLM_API_KEY=your_real_api_key
 LLM_MODEL=qwen/qwen3-next-80b-a3b-instruct:free
 LLM_FALLBACK_MODELS=qwen/qwen3.6-plus:free,qwen/qwen3-coder:free
 LLM_RETRY_ATTEMPTS_PER_MODEL=2
 LLM_RETRY_BACKOFF_SECONDS=1.5
+
+JWT_SECRET=replace_with_long_random_secret
+JWT_EXPIRE_MINUTES=720
 ```
 
-3. Start services:
+4. Build and start all services:
 
 ```bash
-docker compose up --build
+docker compose up --build -d
 ```
 
-4. Open app:
+5. Verify containers:
 
-- Frontend: http://localhost:5173
-- Backend docs: http://localhost:8000/docs
-- Health: http://localhost:8000/api/v1/health
+```bash
+docker compose ps
+```
 
-## API
+6. Open product in browser:
+
+- `http://<VM_IP>:5173`
+
+7. Optional health check:
+
+- `http://<VM_IP>:8000/api/v1/health`
+
+8. Update deployment after changes:
+
+```bash
+git pull
+docker compose up --build -d
+```
+
+## API Summary
 
 - `POST /api/v1/auth/register`
 - `POST /api/v1/auth/login`
@@ -51,70 +165,9 @@ docker compose up --build
 - `GET /api/v1/notes/{id}/export/markdown`
 - `GET /api/v1/health`
 
-Notes API behavior:
-- All `/notes/*` endpoints require `Authorization: Bearer <token>`.
-- History is saved in PostgreSQL and isolated per authenticated user.
+## Submission Helpers
 
-### Analyze Request
-
-```json
-{
-  "raw_text": "Meeting notes...",
-  "output_language": "ru"
-}
-```
-
-### Auth Requests
-
-Register:
-
-```json
-{
-  "username": "team_lead",
-  "password": "strong_password"
-}
-```
-
-Login response:
-
-```json
-{
-  "access_token": "jwt_token",
-  "token_type": "bearer",
-  "expires_in_seconds": 43200
-}
-```
-
-### Analyze Response (example)
-
-```json
-{
-  "id": "uuid",
-  "raw_text": "Meeting notes...",
-  "output_language": "ru",
-  "summary": "...",
-  "decisions": ["..."],
-  "action_items": ["..."],
-  "llm_provider": "qwen_api",
-  "llm_model": "qwen/...",
-  "prompt_version": "v1",
-  "created_at": "2026-04-05T12:00:00Z"
-}
-```
-
-## Deployment on Ubuntu VM
-
-1. Install Docker + Docker Compose plugin.
-2. Clone repo and configure `.env`.
-3. Run:
-
-```bash
-docker compose up --build -d
-```
-
-4. Open `http://<VM_IP>:5173`.
-
-## Notes
-
-- Current backend auto-creates tables on startup for simplicity.
-- For stricter production workflows, add Alembic migrations before release.
+- Slide template: `docs/submission/presentation_5_slides.md`
+- Demo script: `docs/submission/demo_script_2min.md`
+- Final checklist: `docs/submission/submission_checklist.md`
+- Links and QR template: `docs/submission/links_template.md`
