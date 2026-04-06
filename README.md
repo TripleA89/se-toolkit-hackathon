@@ -6,9 +6,13 @@ Submission note: the GitHub repository for grading must be named `se-toolkit-hac
 
 ## Demo
 
-Analyze screen:
+Authorization screen:
 
-![Analyze screen](docs/screenshots/demo-analyze.png)
+![Authorization screen](docs/screenshots/demo-authorization.png)
+
+Main analyze screen:
+
+![Main analyze screen](docs/screenshots/demo-main.png)
 
 History screen:
 
